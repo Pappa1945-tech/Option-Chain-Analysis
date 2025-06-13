@@ -1,0 +1,812 @@
+{% extends "base.html" %}  <!-- MUST BE LINE 1 -->
+{% block content %}
+<!DOCTYPE html>
+<html lang="en-US">
+
+<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Nifty Options Analyzer",
+      "description": "Real-time options analysis tool for traders",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web Browser"
+    }
+</script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nifty Analysis (Current Month)</title>
+    <!-- Favicon -->
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <!-- Add Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Add Altair for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <!-- Add Grid.js -->
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+
+    <meta name="description" content="Real-time [BankNifty/Nifty] options analysis with support/resistance levels, PCR charts, and trend indicators">
+    <meta name="keywords" content="[BankNifty/Nifty] options, trading signals, open interest analysis, SB TECH">
+    <meta name="author" content="SB TECH">
+
+    <!-- Open Graph (for social sharing) -->
+    <meta property="og:title" content="[BankNifty/Nifty] Options Analyzer | SB TECH">
+    <meta property="og:description" content="Live [BankNifty/Nifty] options data with support/resistance and PCR charts">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://youroptionsanalyzerdomain.com/nifty_analysis">
+    <link rel="canonical" href="https://youroptionsanalyzerdomain.com/nifty_analysis" />
+
+    <style>
+        .blink {
+            animation: blink-animation 1s steps(5, start) infinite;
+        }
+
+        @keyframes blink-animation {
+            to {
+                visibility: hidden;
+            }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-bottom: 2rem;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+            padding-left: 0.5rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+
+        .tab-button {
+          background-color: #e4ecae; /* light green background for inactive tabs */
+          border: none;
+          cursor: pointer;
+          border-radius: 0.25rem 0.25rem 0 0;
+          padding: 0.5rem 1rem;
+          transition: background-color 0.3s ease;
+        }
+        
+        .tab-button:hover {
+          background-color: #3bf670; /* blue background on hover */
+          color: white;
+        }
+        
+        .tab-button.active {
+          background-color: #3bf670; /* blue background for active tab */
+          color: white;
+          animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+          0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+          70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+        
+        
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .vega-actions {
+            display: none !important;
+        }
+
+        .vega-bindings {
+            display: none !important;
+        }
+
+        /* ===== Right-Aligned Tooltip ===== */
+        .chart-title[data-tooltip] {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+            /* Main tooltip - shifted right */
+            .chart-title[data-tooltip]::after {
+                content: attr(data-tooltip);
+                position: absolute;
+                bottom: 130%;
+                left: 120%; /* Changed from 50% to push right */
+                transform: translateX(0) scale(0.95); /* Simplified transform */
+                transform-origin: left center; /* Anchor to left side */
+                background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+                color: #fff;
+                padding: 8px 15px;
+                border-radius: 8px;
+                font-size: 13px;
+                font-weight: 500;
+                white-space: nowrap;
+                z-index: 100;
+                pointer-events: none;
+                opacity: 0;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                transition: all 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+                min-width: 200px; /* Prevents narrow tooltips */
+            }
+
+            /* Arrow - positioned at left edge */
+            .chart-title[data-tooltip]::before {
+                content: '';
+                position: absolute;
+                bottom: 120%;
+                left: 110%; /* Matches tooltip position */
+                transform: translateX(0);
+                border-width: 6px;
+                border-style: solid;
+                border-color: #4b6cb7 transparent transparent transparent;
+                z-index: 101;
+                opacity: 0;
+                transition: all 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            }
+
+            /* Animation states */
+            .chart-title[data-tooltip]:hover::after,
+            .chart-title[data-tooltip]:hover::before {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        /* Gradient text for headings */
+        .gradient-text {
+            background: linear-gradient(90deg, #3b82f6 0%, #1e40af 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-modern {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            padding: 0 5px;
+            text-shadow: 0 2px 10px rgba(0,242,254,0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Add this at the top of the content section (after the opening <body> tag) -->
+    <section class="text-center py-12 bg-gradient-to-r from-green-700 to-green-500 rounded-xl text-white mb-8">
+        <div class="max-w-4xl mx-auto px-4">
+            <span class="inline-block bg-green-600 text-xs font-semibold px-3 py-1 rounded-full mb-4">NIFTY ANALYSIS</span>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Nifty Options Analyzer</h1>
+            <p class="text-lg md:text-xl">Comprehensive analysis of Nifty options including OI data, PCR charts, and trend indicators</p>
+        </div>
+    </section>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="card mb-6 bg-white rounded-lg shadow p-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">
+                Nifty Analysis (Expiry: {{ nifty_exp if nifty_exp else "Current Month" }})
+            </h1>
+
+            <div class="tabs-header">
+                <button class="tab-button active" data-tab="sup-res">Support/Resistance</button>
+                <button class="tab-button" data-tab="charts">PCR Charts</button>
+                <button class="tab-button" data-tab="trend">Trend</button>
+            </div>
+
+            <!-- Support/Resistance Tab -->
+            <div id="sup-res" class="tab-content active">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-lg font-semibold text-gray-800" id="sup-res-title">
+                        Nifty Support/Resistance Analysis
+                    </div>
+                    <div class="text-sm text-gray-500" id="sup-res-update-time">
+                        Last update: Loading...
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-[30%_70%] gap-4">
+                    <div class="card bg-white rounded-lg shadow p-4">
+                        <h3 class="text-lg font-semibold mb-2">Key Levels</h3>
+                        <div class="space-y-2" id="key-levels">
+                            <div class="flex justify-between">
+                                <span class="font-medium">ATM Strike:</span>
+                                <span id="atm-strike">Loading...</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium">Support:</span>
+                                <span id="support-level">Loading...</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium">Resistance:</span>
+                                <span id="resistance-level">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-white rounded-lg shadow p-4">
+                        <h3 class="text-lg font-semibold mb-2">OI Data</h3>
+                        <div id="oi-chart-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PCR Charts Tab -->
+            <div id="charts" class="tab-content">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-lg font-semibold text-gray-800" id="charts-title">
+                        Nifty PCR Analysis (Range: ATM +/- 10 strike)
+                    </div>
+                    <div class="text-sm text-gray-500" id="charts-update-time">
+                        Last update: Loading...
+                    </div>
+                </div>
+
+                <div class="space-y-6" id="pcr-charts-container">
+                    <!-- PCR charts will be inserted here -->
+                </div>
+            </div>
+            <!-- Trend Tab -->
+            <div id="trend" class="tab-content">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-lg font-semibold text-gray-800" id="trend-title">
+                        Nifty Trend Analysis
+                    </div>
+                    <div class="text-sm text-gray-500" id="trend-update-time">
+                        Last update: Loading...
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- First Column - Meter -->
+                    <div class="card bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Current Market Trend Strength</h3>
+                        <div class="flex flex-col items-center">
+                            <div class="w-full max-w-md">
+                                <div class="relative h-8 bg-gray-200 rounded-full overflow-hidden mb-2">
+                                    <div id="trend-meter" class="absolute h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 transition-all duration-500"
+                                         style="width: 0%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-600">
+                                    <span>0 (Bearish)</span>
+                                    <span>50 (Neutral)</span>
+                                    <span>100 (Bullish)</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-xl font-bold" id="trend-value">Loading...</div>
+                            <div class="mt-2 text-sm text-gray-600" id="trend-description"></div>
+                        </div>
+                    </div>
+
+                    <!-- Second Column - Trend History Grid -->
+                    <div class="card bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Trend History</h3>
+                        <div id="trend-grid-container" class="w-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Connect to SocketIO
+        const socket = io();
+        let currentNiftyData = null;
+        let currentPcrData = null;
+
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and content
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+                // Add active class to clicked button and corresponding content
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Grid.js instance for trend history
+        let trendGrid = null;
+
+        // New function to update charts with complete dataset
+        function updatePcrChartsWithData(chartData) {
+            const pcrMetrics = [
+                { name: 'PCR_OI', avgName: 'avg_PCR_OI', title: 'PCR Open Interest' },
+                { name: 'PCR_OICNG', avgName: 'avg_PCR_OICNG', title: 'PCR Open Interest Change' },
+                { name: 'PCR_OI_UPPER', avgName: 'avg_PCR_OI_UPPER', title: 'PCR Upper OI' },
+                { name: 'PCR_OICNG_UPPER', avgName: 'avg_PCR_OICNG_UPPER', title: 'PCR Upper OI Change' },
+                { name: 'PCR_OI_LOWER', avgName: 'avg_PCR_OI_LOWER', title: 'PCR Lower OI' },
+                { name: 'PCR_OICNG_LOWER', avgName: 'avg_PCR_OICNG_LOWER', title: 'PCR Lower OI Change' }
+            ];
+
+            const container = document.getElementById('pcr-charts-container');
+
+            // Clear existing charts
+            container.innerHTML = '';
+            pcrCharts = {};
+
+            // Update timestamp
+            const now = new Date();
+            document.getElementById('charts-update-time').textContent = `Last update: ${now.toLocaleTimeString()}`;
+            document.getElementById('charts-update-time').classList.add('blink');
+            setTimeout(() => {
+                document.getElementById('charts-update-time').classList.remove('blink');
+            }, 1000);
+
+            // Create charts for each metric
+            pcrMetrics.forEach(metric => {
+                // Skip if no data for this metric
+                if (!chartData[metric.name] || !chartData[metric.avgName]) return;
+
+                const chartId = `chart-${metric.name}`;
+                const canvasId = `canvas-${metric.name}`;
+
+                // Create chart container
+                const chartContainer = document.createElement('div');
+                chartContainer.className = 'chart-container';
+                chartContainer.id = chartId;
+
+                const chartTitle = document.createElement('div');
+                chartTitle.className = 'chart-title';
+                chartTitle.textContent = metric.title;
+
+                // Add tooltips
+                if (metric.name === 'PCR_OI') {
+                    chartTitle.setAttribute('data-tooltip', 'Put-Call (Open Interest)');
+                }
+                else if (metric.name === 'PCR_OICNG') {
+                    chartTitle.setAttribute('data-tooltip', 'Put-Call (Open Interest Change)');
+                }
+                else if (metric.name === 'PCR_OI_UPPER') {
+                    chartTitle.setAttribute('data-tooltip', 'Put-Call (Open Interest) for strikes >= ATM Strike');
+                }
+                else if (metric.name === 'PCR_OICNG_UPPER') {
+                    chartTitle.setAttribute('data-tooltip', 'Put-Call (Open Interest Change) for strikes >= ATM Strike');
+                }
+                else if (metric.name === 'PCR_OI_LOWER') {
+                    chartTitle.setAttribute('data-tooltip', 'Put-Call (Open Interest) for strikes <= ATM Strike');
+                }
+                else if (metric.name === 'PCR_OICNG_LOWER') {
+                    chartTitle.setAttribute('data-tooltip', 'Put-Call (Open Interest Change) for strikes <= ATM Strike');
+                }
+
+                chartTitle.style.cursor = 'help';
+
+                const canvas = document.createElement('canvas');
+                canvas.id = canvasId;
+
+                chartContainer.appendChild(chartTitle);
+                chartContainer.appendChild(canvas);
+                container.appendChild(chartContainer);
+
+                // Create chart
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                pcrCharts[metric.name] = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.timestamps.map(timestamp => {
+                            // Extract time portion (HH:MM:SS) from full timestamp
+                            const timePart = timestamp.split(' ')[1]; // Split on space and take second part
+                            return timePart || timestamp; // Fallback to original if format is unexpected
+                        }),
+                        datasets: [
+                            {
+                                label: metric.name,
+                                data: chartData[metric.name],
+                                borderColor: '#10B981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderWidth: 2,
+                                tension: 0.1
+                            },
+                            {
+                                label: `Average ${metric.name}`,
+                                data: chartData[metric.avgName],
+                                borderColor: '#EF4444',
+                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                borderWidth: 2,
+                                tension: 0.1,
+                                borderDash: [5, 5]
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // This is crucial for fitting the container
+                        scales: {
+                            x: {
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45,
+                                    autoSkip: true,
+                                    maxTicksLimit: 15 // Limit number of x-axis labels
+                                },
+                                grid: {
+                                    display: false // Cleaner look
+                                }
+                            },
+                            y: {
+                                beginAtZero: false,
+                                suggestedMin: Math.min(...chartData[metric.name], ...chartData[metric.avgName]) * 0.95,
+                                suggestedMax: Math.max(...chartData[metric.name], ...chartData[metric.avgName]) * 1.05,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)' // Lighter grid lines
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    boxWidth: 12,
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                bodySpacing: 5
+                            },
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: 'xy',
+                                    modifierKey: 'ctrl'
+                                },
+                                zoom: {
+                                    wheel: {
+                                        enabled: true
+                                    },
+                                    pinch: {
+                                        enabled: true
+                                    },
+                                    mode: 'xy',
+                                    drag: {
+                                        enabled: true,
+                                        modifierKey: 'shift'
+                                    }
+                                }
+                            }
+                        },
+                        elements: {
+                            point: {
+                                radius: 0 // Remove points for cleaner look with many data points
+                            }
+                        },
+                        animation: {
+                            duration: 0 // Disable animations for better performance
+                        }
+                    }
+                });
+            });
+        }
+        // Initialize the trend grid
+        function initTrendGrid(data) {
+            // Filter out duplicate entries based on timestamp
+            const uniqueData = [];
+            const seenTimestamps = new Set();
+
+            // Process data in reverse order to keep the most recent entries
+            [...data].reverse().forEach(item => {
+                const timestamp = new Date(item.tm).toLocaleTimeString();
+                if (!seenTimestamps.has(timestamp)) {
+                    seenTimestamps.add(timestamp);
+                    uniqueData.unshift(item); // Add to beginning to maintain chronological order
+                }
+            });
+
+            if (trendGrid) {
+                trendGrid.updateConfig({
+                    data: uniqueData.map(item => [
+                        new Date(item.tm).toLocaleTimeString(),
+                        item.trend,
+                        getTrendDescription(item.trend)
+                    ])
+                }).forceRender();
+            } else {
+                trendGrid = new gridjs.Grid({
+                    columns: [
+                        { name: 'Time', width: '35%' },
+                        { name: 'Value', width: '25%' },
+                        { name: 'Description', width: '40%' }
+                    ],
+                    data: uniqueData.map(item => [
+                        new Date(item.tm).toLocaleTimeString(),
+                        item.trend,
+                        getTrendDescription(item.trend)
+                    ]),
+                    pagination: {
+                        limit: 10
+                    },
+                    sort: true,
+                    search: true,
+                    style: {
+                        table: {
+                            'white-space': 'nowrap'
+                        }
+                    }
+                }).render(document.getElementById('trend-grid-container'));
+            }
+        }
+
+        // Helper function to get trend description
+        function getTrendDescription(value) {
+            if (value < 25) return "Bearish+";
+            if (value < 50) return "Bearish";
+            if (value > 75) return "Bullish+";
+            if (value > 50) return "Bullish";
+            return "No Trend";
+        }
+
+        function updateTrendDisplay(data) {
+            if (!data) return;
+
+            // Update meter and current value
+            const trendValue = data.trend;
+            const meter = document.getElementById('trend-meter');
+            const valueDisplay = document.getElementById('trend-value');
+            const description = document.getElementById('trend-description');
+
+            // Clear any existing trend lines
+            const existingLines = meter.parentElement.querySelectorAll('.trend-line');
+            existingLines.forEach(line => line.remove());
+
+            // Update meter width and style
+            meter.style.width = `${trendValue}%`;
+            meter.style.background = 'none'; // Reset background
+
+            // Set gradient background on parent (only once)
+            if (!meter.parentElement.style.background) {
+                meter.parentElement.style.background = 'linear-gradient(to right, #f00522, #00f531)';
+            }
+
+            // Create and append a single white trend line
+            const trendLine = document.createElement('div');
+            trendLine.className = 'trend-line'; // Add a class for easy removal
+            trendLine.style.position = 'absolute';
+            trendLine.style.top = '0';
+            trendLine.style.left = `${trendValue}%`;
+            trendLine.style.width = '2px';
+            trendLine.style.height = '100%';
+            trendLine.style.background = 'white';
+            trendLine.style.zIndex = '10'; // Ensure it's above the gradient
+            meter.parentElement.appendChild(trendLine);
+
+            // Update value and description
+            valueDisplay.textContent = trendValue;
+
+            // Set description based on value
+            if (trendValue < 25) {
+                description.textContent = "Strong Bearish";
+            } else if (trendValue < 50) {
+                description.textContent = "Bearish";
+            } else if (trendValue === 50) {
+                description.textContent = "Range Bound";
+            } else if (trendValue > 75) {
+                description.textContent = "Strong Bullish";
+            } else if (trendValue > 50) {
+                description.textContent = "Bullish";
+            }
+
+            // Update timestamp
+            const now = new Date();
+            document.getElementById('trend-update-time').textContent = `Last update: ${now.toLocaleTimeString()}`;
+            document.getElementById('trend-update-time').classList.add('blink');
+            setTimeout(() => {
+                document.getElementById('trend-update-time').classList.remove('blink');
+            }, 1000);
+
+            // Initialize or update grid if history data exists
+            if (data.history) {
+                initTrendGrid(data.history);
+            }
+        }
+
+        // Update Support/Resistance display
+        function updateSupResDisplay() {
+            if (!currentNiftyData) return;
+
+            // Update key levels
+            document.getElementById('atm-strike').textContent = currentNiftyData.atm_strike;
+            document.getElementById('support-level').textContent = currentNiftyData.support;
+            document.getElementById('resistance-level').textContent = currentNiftyData.resistance;
+
+            // Update timestamp
+            const now = new Date();
+            document.getElementById('sup-res-update-time').textContent = `Last update: ${now.toLocaleTimeString()}`;
+            document.getElementById('sup-res-update-time').classList.add('blink');
+            setTimeout(() => {
+                document.getElementById('sup-res-update-time').classList.remove('blink');
+            }, 1000);
+
+            // Update OI chart
+            updateOiChart();
+        }
+
+        // Update OI Chart using Vega-Lite
+        function updateOiChart() {
+            if (!currentNiftyData || !currentNiftyData.oi_data) return;
+
+            // Transform data for visualization
+            const oiData = currentNiftyData.oi_data;
+            const transformedData = [];
+
+            oiData.forEach(row => {
+                transformedData.push({
+                    'Strike Price': row['Strike Price'],
+                    'Metric': 'CALLS_OI',
+                    'Value': row['CALLS_OI']
+                });
+                transformedData.push({
+                    'Strike Price': row['Strike Price'],
+                    'Metric': 'PUTS_OI',
+                    'Value': row['PUTS_OI']
+                });
+                transformedData.push({
+                    'Strike Price': row['Strike Price'],
+                    'Metric': 'CALLS_Chng in OI',
+                    'Value': row['CALLS_Chng in OI']
+                });
+                transformedData.push({
+                    'Strike Price': row['Strike Price'],
+                    'Metric': 'PUTS_Chng in OI',
+                    'Value': row['PUTS_Chng in OI']
+                });
+            });
+
+            // Create Vega-Lite spec
+            const spec = {
+                "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                "description": "Options Open Interest and Changes by Strike Price",
+                "data": {
+                    "values": transformedData
+                },
+                "mark": "bar",
+                "encoding": {
+                    "x": {
+                        "field": "Strike Price",
+                        "type": "ordinal",
+                        "title": "Strike Price"
+                    },
+                    "y": {
+                        "field": "Value",
+                        "type": "quantitative",
+                        "title": "Value"
+                    },
+                    "color": {
+                        "field": "Metric",
+                        "scale": {
+                            "domain": ["CALLS_OI", "PUTS_OI", "CALLS_Chng in OI", "PUTS_Chng in OI"],
+                            "range": ["#ff0000", "#00aa00", "#ff9999", "#99ff99"]
+                        },
+                        "legend": {
+                            "title": "Metrics"
+                        }
+                    },
+                    "tooltip": [
+                        { "field": "Strike Price", "type": "ordinal" },
+                        { "field": "Metric", "type": "nominal" },
+                        { "field": "Value", "type": "quantitative" }
+                    ]
+                },
+                "config": {
+                    "view": {
+                        "strokeWidth": 0
+                    }
+                }
+            };
+
+            // Add annotations for ATM, Support, Resistance
+            const annotations = [
+                {
+                    "Strike Price": currentNiftyData.atm_strike,
+                    "Label": "ATM",
+                    "Offset": 5
+                },
+                {
+                    "Strike Price": currentNiftyData.support,
+                    "Label": "Support",
+                    "Offset": 5
+                },
+                {
+                    "Strike Price": currentNiftyData.resistance,
+                    "Label": "Resistance",
+                    "Offset": 5
+                }
+            ];
+
+            // Embed the chart
+            vegaEmbed('#oi-chart-container', spec, { actions: false })
+                .then(result => {
+                    // Add annotations manually after chart is rendered
+                    const svg = document.querySelector('#oi-chart-container svg');
+                    annotations.forEach(anno => {
+                        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                        text.setAttribute("x", (anno["Strike Price"] - oiData[0]["Strike Price"]) * 20 + 10);
+                        text.setAttribute("y", 20);
+                        text.setAttribute("font-size", "12");
+                        text.setAttribute("font-weight", "bold");
+                        text.setAttribute("transform", "rotate(270)");
+                        text.textContent = anno.Label;
+                        svg.appendChild(text);
+                    });
+                })
+                .catch(console.error);
+        }
+
+        // Store chart references globally
+        // Global chart store
+        // Store chart data and references in sessionStorage
+        let pcrCharts = {};
+        let pcrChartData = JSON.parse(sessionStorage.getItem('pcrChartData')) || {};
+
+        // Save chart data before page unload
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.setItem('pcrChartData', JSON.stringify(pcrChartData));
+        });
+
+
+        // Modify your socket connection handler:
+        socket.on('connect', () => {
+            socket.emit('request_nifty_data');
+            socket.emit('request_trend_data');
+            socket.emit('request_nifty_pcr_chart_data');
+            socket.emit('request_expiry');
+        });
+
+        // Add this near the top with other socket handlers
+        socket.on('pcr_chart_data', (data) => {
+            updatePcrChartsWithData(data);
+        });
+
+        // Handle nifty data updates
+        socket.on('nifty_update', (data) => {
+            currentNiftyData = data;
+            updateSupResDisplay();
+        });
+
+        // Handle trend data updates
+        socket.on('trend_update', (data) => {
+            updateTrendDisplay(data);
+        });
+        // Add this new handler at the top with other socket handlers
+
+        socket.on('expiry_update', (data) => {
+            const expiryText = data.nifty_exp || "Current Month";
+            const header = document.querySelector("h1.text-2xl");
+            if (header) {
+                header.textContent = `Nifty Analysis (Expiry: ${expiryText})`;
+            }
+        });
+    </script>
+    <script src="/static/js/navigation.js"></script>
+</body>
+</html>
+{% endblock %}

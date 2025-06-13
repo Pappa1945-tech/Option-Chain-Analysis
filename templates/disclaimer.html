@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Market WebApp - Disclaimer</title>
+    <!-- Favicon -->
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+
+    <meta name="description" content="Legal disclaimer for Options Analyzer by SB TECH">
+    <meta name="keywords" content="options trading disclaimer, legal terms, SB TECH">
+
+    <!-- Add TailwindCSS for consistent styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to match banknifty_analysis.html */
+        .legal-highlight {
+            font-weight: 600;
+            color: #ef4444; /* Tailwind red-500 */
+        }
+
+        .tooltip-underline {
+            border-bottom: 1px dashed #6b7280;
+            cursor: help;
+        }
+        /* Gradient text for headings */
+        .gradient-text {
+            background: linear-gradient(90deg, #3b82f6 0%, #1e40af 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-modern {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            padding: 0 5px;
+            text-shadow: 0 2px 10px rgba(0,242,254,0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Add this at the top of the content section (after the opening <body> tag) -->
+    <section class="text-center py-12 bg-gradient-to-r from-gray-700 to-gray-500 rounded-xl text-white mb-8">
+        <div class="max-w-4xl mx-auto px-4">
+            <span class="inline-block bg-gray-600 text-xs font-semibold px-3 py-1 rounded-full mb-4">LEGAL INFORMATION</span>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Disclaimer & Terms</h1>
+            <p class="text-lg md:text-xl">Important legal information about using our services</p>
+        </div>
+    </section>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="card bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Legal Disclaimer for Options Analyzer</h1>
+            <p class="text-gray-600 text-center mb-8"><strong>Last Updated:</strong> 05/06/2025</p>
+
+            <!-- Section 1 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">1. Ownership & Intellectual Property</h2>
+                <p class="mb-4"><strong>SB TECH (Udyam Registration No: UDYAM-WB-14-0189562)</strong>, a proprietary enterprise owned by Subhamoy Bhattacharjee, is the sole developer and proprietor of this stock market webapp 'Options Analyzer' (hereinafter "the WebApp").</p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>The WebApp, including its algorithms, technology, signals, and content, is the exclusive intellectual property of SB TECH.</li>
+                    <li>No third party may claim any rights to the WebApp without written authorization from SB TECH.</li>
+                </ul>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">2. Regulatory Disclaimer</h2>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li class="legal-highlight">This WebApp is NOT registered with SEBI or any other financial regulatory authority.</li>
+                    <li>The information provided is NOT intended to be and does not constitute financial advice, investment advice, trading advice, or any other advice.</li>
+                    <li>The WebApp is for informational/educational purposes only.</li>
+                </ul>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">3. User Rights & Restrictions</h2>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>
+                        <strong>SB TECH reserves the right to:</strong>
+                        <ul class="list-disc pl-6 mt-2 space-y-2">
+                            <li>Cancel, suspend, or restrict users/subscriptions/licenses without notice.</li>
+                            <li>Modify pricing, features, or terms at any time.</li>
+                        </ul>
+                    </li>
+                    <li class="legal-highlight">All fees are non-refundable under any circumstances. SB TECH has no refund/return policy.</li>
+                </ul>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">4. Trading Signals & Data Disclaimer</h2>
+                <p class="mb-2">Users acknowledge and agree that:</p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li class="legal-highlight">All trading signals, buy/sell signals, and market data are provided for informational purposes only and should not be construed as investment advice.</li>
+                    <li>Past performance is not indicative of future results.</li>
+                    <li>Stock market investments are inherently risky and you may lose some or all of your invested capital.</li>
+                    <li>The accuracy of signals and data depends on market conditions, data quality, and other external factors.</li>
+                    <li class="legal-highlight">You are solely responsible for your investment decisions and must consult with a qualified and SEBI registered financial advisor before making any trades.</li>
+                </ul>
+            </div>
+
+            <!-- Section 5 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">5. No Warranty</h2>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>The WebApp is provided "as is" without any representations or warranties, express or implied.</li>
+                    <li>SB TECH makes no representations or warranties in relation to the accuracy, completeness, or reliability of the information on this WebApp.</li>
+                </ul>
+            </div>
+
+            <!-- Section 6 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">6. Limitation of Liability</h2>
+                <p class="mb-2">SB TECH shall not be liable for:</p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li class="legal-highlight">Any financial losses, damages (direct/indirect), or lost profits resulting from the use or misuse of the WebApp.</li>
+                    <li>Losses due to reliance on any signals, data, or information provided by the WebApp.</li>
+                    <li>Disruptions from force majeure events (server failures, natural disasters, etc.).</li>
+                    <li>Software updates that may require user-side compatibility checks.</li>
+                </ul>
+            </div>
+
+            <!-- Section 7 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">7. Data Privacy</h2>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>User data is stored securely but may be used anonymously to improve algorithms.</li>
+                    <li>SB TECH complies with India's Digital Personal Data Protection Act (2023) but cannot guarantee absolute security against breaches.</li>
+                </ul>
+            </div>
+
+            <!-- Section 8 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">8. Governing Law & Jurisdiction</h2>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>This agreement shall be governed by the laws of India.</li>
+                    <li>Any legal disputes shall be subject to the exclusive jurisdiction of the courts of [Barrackpore Subdivisional court, West Bengal 700120].</li>
+                </ul>
+            </div>
+
+            <!-- Section 9 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">9. Business Verification</h2>
+                <p class="mb-2">SB TECH is a registered enterprise under:</p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>Udyam Registration No.: UDYAM-WB-14-0189562</li>
+                    <li>Trade License No.: 0917P77425267889</li>
+                    <li>Address: Kakoli, Rahara, Kolkata, WB – 700112</li>
+                    <li>Contact: <span class="tooltip-underline" title="For legal inquiries">researchonastrology@gmail.com</span></li>
+                </ul>
+            </div>
+
+            <!-- Section 10 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">10. Acceptance of Terms</h2>
+                <p class="legal-highlight mb-2">By using this WebApp, you unconditionally agree to:</p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>This disclaimer and all terms herein.</li>
+                    <li>Waive all claims against SB TECH and Subhamoy Bhattacharjee.</li>
+                    <li>Assume full responsibility for your investment decisions.</li>
+                </ul>
+            </div>
+
+            <div class="text-center text-gray-500 text-sm mt-12">
+                <p>© 2025 SB TECH. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation highlighting script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Highlight active nav link
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('data-path') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Add tooltip functionality
+            document.querySelectorAll('.tooltip-underline').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert(el.getAttribute('title'));
+                });
+            });
+        });
+    </script>
+    <script src="/static/js/navigation.js"></script>
+</body>
+</html>
+{% endblock %}
