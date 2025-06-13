@@ -127,7 +127,7 @@ cd options-analyzer
 
 
 Install dependencies:
-pip install -r requirements.txt
+pip install -r requirements.txt and don't forget to install Visual C++ Redistributable
 
 Note: Create requirements.txt with flask, flask-socketio, pandas, numpy, nsepython, requests.
 ** Need Visual C++ Redistributable installed to run .pyd files
