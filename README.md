@@ -28,7 +28,7 @@ Monitoring: Real-time connection status updates.
 
 Tech Stack
 
-Backend: Python, Flask, Flask-SocketIO
+Backend: Python, Cython, Flask, Flask-SocketIO
 Data Processing: Pandas, NumPy
 Data Source: nsepython for NSE option chain data
 Concurrency: ThreadPoolExecutor for parallel tasks
