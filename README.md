@@ -1,4 +1,21 @@
 # Option-Chain-Analysis
+# 📊 Option‑Chain Analysis
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) 
+[![Python](https://img.shields.io/badge/Python-3.7%2B-yellow.svg)]()  
+*A Python tool for fetching, analyzing, and visualizing Nifty & BankNifty option-chain data.*
+
+---
+
+## 📹 Demo Video
+
+🎥 **Watch the demo below to see the project in action:**
+
+[![Option Chain Analysis Demo](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](https://github.com/Pappa1945-tech/Option-Chain-Analysis/blob/main/demo-video.mp4)
+
+> *(Click the image above or [this link](https://github.com/Pappa1945-tech/Option-Chain-Analysis/blob/main/demo-video.mp4) to play the video.)*
+
+---
 Options Analyzer
 A real-time web application for analyzing Nifty and BankNifty options, providing support/resistance levels, Put-Call Ratio (PCR) analysis, trend indicators, and trading signals. Built with Python, Flask, SocketIO, and Pandas, it leverages NSE option chain data to deliver actionable insights for traders.
 Project Overview
