@@ -1,19 +1,9 @@
-# Option-Chain-Analysis
+
 # 📊 Option‑Chain Analysis
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) 
-[![Python](https://img.shields.io/badge/Python-3.7%2B-yellow.svg)]()  
-*A Python tool for fetching, analyzing, and visualizing Nifty & BankNifty option-chain data.*
+## 🎥 Demo
 
----
-
-## 📹 Demo Video
-
-🎥 **Watch the demo below to see the project in action:**
-
-[![Option Chain Analysis Demo](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](https://github.com/Pappa1945-tech/Option-Chain-Analysis/blob/main/demo-video.mp4)
-
-> *(Click the image above or [this link](https://github.com/Pappa1945-tech/Option-Chain-Analysis/blob/main/demo-video.mp4) to play the video.)*
+[![Watch the demo](https://img.youtube.com/vi/l4e37CqCvUc/0.jpg)](https://youtu.be/l4e37CqCvUc)
 
 ---
 Options Analyzer
