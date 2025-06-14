@@ -10,7 +10,9 @@ Trend Indicators: Quantifies bullish/bearish trends based on PCR and Last Traded
 Trading Signals: Generates real-time buy/sell signals for specific strike prices.
 Strike Price Analysis: Provides detailed historical and real-time data for selected strikes.
 
-This project showcases advanced Python skills, real-time data processing, and web development, making it a strong portfolio piece for a Python developer role.
+This project showcases advanced Python and Cython skills, real-time data processing, and web development, making it a strong portfolio piece for a Python developer role.
+I convert two python file to .pyd file, which is Windows DLL (Dynamic Link Library) file that contains compiled Python code, created using through Cython (C++ extensions) for Python. It's a way to package compiled Python code for use in Python modules, for performance reasons (because speed matters) 
+
 Features
 
 Real-Time Data: Fetches and processes NSE option chain data every second using multithreading.
