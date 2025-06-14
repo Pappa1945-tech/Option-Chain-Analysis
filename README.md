@@ -1,51 +1,53 @@
+# 📈 Option-Chain Analysis
 
-# 📊 Option‑Chain Analysis
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey)](#)
 
-## 🎥 Demo
+Analyze Nifty & BankNifty option chains in real time, with comprehensive analytics, trading signals, and interactive dashboards. Built for traders and Python developers seeking robust, production-grade analytics.
+
+---
+
+## 🎬 Demo
 
 [![Watch the demo](https://img.youtube.com/vi/l4e37CqCvUc/0.jpg)](https://youtu.be/l4e37CqCvUc)
 
 ---
-Options Analyzer
-A real-time web application for analyzing Nifty and BankNifty options, providing support/resistance levels, Put-Call Ratio (PCR) analysis, trend indicators, and trading signals. Built with Python, Flask, SocketIO, and Pandas, it leverages NSE option chain data to deliver actionable insights for traders.
-Project Overview
-Options Analyzer is a robust tool for options traders, fetching real-time Nifty and BankNifty option chain data from the National Stock Exchange (NSE) via the nsepython library. It processes this data to compute key metrics and visualizes results through an interactive web interface. Key features include:
 
-Support/Resistance Levels: Identifies critical price points using open interest (OI) and volume.
-PCR Analysis: Calculates Put-Call Ratios to assess market sentiment.
-Trend Indicators: Quantifies bullish/bearish trends based on PCR and Last Traded Price (LTP).
-Trading Signals: Generates real-time buy/sell signals for specific strike prices.
-Strike Price Analysis: Provides detailed historical and real-time data for selected strikes.
+## 🚀 Overview
 
-This project showcases advanced Python and Cython skills, real-time data processing, and web development, making it a strong portfolio piece for a Python developer role.
-I convert two python file to .pyd file, which is Windows DLL (Dynamic Link Library) file that contains compiled Python code, created using through Cython (C++ extensions) for Python. It's a way to package compiled Python code for use in Python modules, for performance reasons (because speed matters) 
+Option-Chain Analysis is a sophisticated web application for real-time options analytics. It fetches Nifty and BankNifty option chain data from NSE, processes it using advanced algorithms, and displays actionable support/resistance, trend, and signal information.
 
-Features
+- **Real-Time Analytics:** Multithreaded data fetch and processing.
+- **Advanced Signals:** PCR, trend indicators, and buy/sell signals.
+- **Built with:** Python, Cython, Flask, SocketIO, Pandas, NumPy.
 
-Real-Time Data: Fetches and processes NSE option chain data every second using multithreading.
-Interactive UI: Flask and SocketIO enable dynamic, real-time updates.
-Advanced Analytics:
-Support/resistance based on OI and volume.
-PCR metrics with hybrid averages (simple moving to rolling mean).
-Trend strength (0–100 scale) using LTP and PCR.
-Signals driven by straddle LTP, implied volatility (IV), and trends.
+---
 
+## 🛠 Features
 
-Robustness: Comprehensive error handling and logging.
-Security: Google Drive-based password authentication.
-Monitoring: Real-time connection status updates.
+- **Support/Resistance Calculation:** Based on open interest and volume.
+- **PCR Analysis:** Put-Call Ratio with hybrid (SMA/rolling mean) metrics.
+- **Trend Indicators:** Quantitative trend strength (0–100 scale).
+- **Trading Signals:** Real-time buy/sell alerts.
+- **Strike Analysis:** Historical and real-time metrics for selected strikes.
+- **Security:** Google Drive-based password authentication.
+- **Robustness:** Comprehensive error handling, logging, and connection monitoring.
 
-Tech Stack
+---
 
-Backend: Python, Cython, Flask, Flask-SocketIO
-Data Processing: Pandas, NumPy
-Data Source: nsepython for NSE option chain data
-Concurrency: ThreadPoolExecutor for parallel tasks
-Frontend: HTML, Jinja2
-Deployment: Local server (port 5000), cloud-ready
-Dependencies: See requirements.txt
+## 🏗️ Tech Stack
 
-Project Structure
+- **Backend:** Python, Cython, Flask, Flask-SocketIO
+- **Data Processing:** Pandas, NumPy, nsepython
+- **Frontend:** HTML, Jinja2, JavaScript
+- **Deployment:** Local server (port 5000), cloud-ready
+
+---
+
+## 📁 Project Structure
+
+```
 ├── __pycache__/
 ├── all_functions.cp311-win_amd64.pyd
 ├── app.py
@@ -63,113 +65,59 @@ Project Structure
     ├── nifty_analysis.html
     ├── signals.html
     └── strikes.html
+```
 
-Workflow
+---
 
-Initialization:
+## ⚡ Quick Start
 
-app.py launches Flask and SocketIO.
-run_option_chain_fetchers() authenticates via Google Drive.
-glob_var.py initializes state variables.
-
-
-Data Fetching:
-
-fetch_nifty_oc() and fetch_banknifty_oc() retrieve option chain data.
-Filters strikes (±20 from ATM) and adds computed columns (e.g., PCR_OI, straddleLtp).
-
-
-Data Processing:
-
-calculate_pcr_data() computes PCR metrics with hybrid averages.
-find_sup_resis() determines support/resistance levels.
-give_signals() generates trading signals.
-get_strike_price() fetches strike-specific data.
-
-
-Real-Time Updates:
-
-background_thread() updates data every 5 seconds.
-SocketIO emits events for expiry, trends, signals, strikes, support/resistance, and PCR charts.
-
-
-Frontend:
-
-Templates render static content.
-SocketIO updates UI with real-time data.
-
-
-
-Dataflow
-
-Input:
-
-NSE option chain data via nsepython.
-User-selected strike prices via SocketIO.
-
-
-Processing:
-
-Stores raw data in nifty_mother_list and banknifty_mother_list.
-Computes metrics (PCR, signals, support/resistance) stored in glob_var.
-Applies hybrid averages for trend smoothing.
-
-
-Output:
-
-Emits data to frontend via SocketIO for:
-Support/resistance levels
-PCR charts
-Trend indicators
-Trading signals
-Strike analytics (LTP, IV, bid/ask)
-
-
-
-
-
-Installation
-
-Clone the repository:
-git clone https://github.com/your-username/options-analyzer.git
-cd options-analyzer
-
-
-Install dependencies:
-pip install -r requirements.txt and don't forget to install Visual C++ Redistributable
-
-Note: Create requirements.txt with flask, flask-socketio, pandas, numpy, nsepython, requests.
-** Need Visual C++ Redistributable installed to run .pyd files
-
-Run the app:
+```bash
+git clone https://github.com/Pappa1945-tech/Option-Chain-Analysis.git
+cd Option-Chain-Analysis
+pip install -r requirements.txt
+# Ensure Visual C++ Redistributable is installed for .pyd files
 python app.py
+```
+Access at [http://localhost:5000](http://localhost:5000)
 
+---
 
-Access at http://localhost:5000.
+## 🔎 Usage
 
+- `/` — Analyze strike prices.
+- `/nifty` — Nifty analytics.
+- `/banknifty` — BankNifty analytics.
+- `/signals` — Real-time trading signals.
+- `/disclaimer` — Legal information.
+- `/ContactUs` — Support contact.
 
-Usage
+---
 
-Home (/): Analyze strike prices.
-Nifty Analysis (/nifty): View Nifty metrics.
-BankNifty Analysis (/banknifty): View BankNifty metrics.
-Signals (/signals): Monitor trading signals.
-Disclaimer (/disclaimer): Legal terms.
-Contact (/ContactUs): Support contact.
+## 📈 Future Enhancements
 
-Future Enhancements
+- Cloud deployment (AWS/GCP)
+- Modern React frontend
+- PostgreSQL database for history
+- Mobile app
+- Backtesting analytics
 
-Cloud Deployment: AWS/GCP for public access.
-Frontend Upgrade: React for enhanced UI.
-Database: PostgreSQL for historical data.
-Mobile App: Cross-platform trading app.
-Backtesting: Signal performance analysis.
+---
 
-Legal Disclaimer
-Options Analyzer is for educational purposes only and not financial advice. Consult SEBI-registered advisors for trading decisions. See disclaimer.html for details.
-Contact
+## 🤝 Contributing
 
-Email: researchonastrology@gmail.com
-Phone: +91 9123779929
+Contributions are welcome! Please open an issue or PR.
+
+---
+
+## ⚠️ Legal Disclaimer
+
+Option-Chain Analysis is for educational purposes only and does not constitute financial advice. Please consult a SEBI-registered advisor before making trading decisions.
+
+---
+
+## 📬 Contact
+
+- **Email:** researchonastrology@gmail.com
+- **Phone:** +91 9123779929
 
 © 2025 SB TECH. All rights reserved.
