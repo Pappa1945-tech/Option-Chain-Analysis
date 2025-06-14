@@ -117,7 +117,7 @@ Option-Chain Analysis is for educational purposes only and does not constitute f
 
 ## 📬 Contact
 
-- **Email:** researchonastrology@gmail.com
+- **Email:** harekrishnajoyradhe@gmail.com
 - **Phone:** +91 9123779929
 
 © 2025 SB TECH. All rights reserved.
