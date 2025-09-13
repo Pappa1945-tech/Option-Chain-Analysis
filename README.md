@@ -199,7 +199,8 @@ See `disclaimer.html` for full details.
 ## 🔗 Explore More
 
 If you’re interested in my other live project on astrology and AI,  
-please check out 👉 [Talk2Destiny](https://www.talk2destiny.co.in/)  
+please check out 👉 [Talk2Destiny](https://www.talk2destiny.co.in/) 
+and also check https://www.producthunt.com/products/destinyai
 for advanced research papers, the Luck Meter, and **DestinyAI** tools.
 
 
