@@ -194,4 +194,13 @@ See `disclaimer.html` for full details.
 - **Email:** researchonastrology@gmail.com
 - **Phone:** +91 9123779929
 
+---
+
+## 🔗 Explore More
+
+If you’re interested in my other live project on astrology and AI,  
+please check out 👉 [Talk2Destiny](https://www.talk2destiny.co.in/)  
+for advanced research papers, the Luck Meter, and **DestinyAI** tools.
+
+
 © 2025 SB TECH. All rights reserved.
